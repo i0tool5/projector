@@ -1,0 +1,36 @@
+
+directories:
+  - directory:
+    name: "cmd"
+    directories:
+      - directory:
+        name: "go-template"
+        files:
+          - main.go
+          - .gitignore
+  - directory:
+    name: "configs"
+    files:
+  - directory:
+    name: "docs"
+    files:
+  - directory:
+    name: "examples"
+    files:
+  - directory:
+    name: "internal"
+    files:
+  - directory:
+    name: "pkg"
+    files:
+    directories:
+      - directory:
+        name: "server"
+        files:
+  - directory:
+    name: "tools"
+    files:
+
+# - directory:
+#   name: "docs"
+#   files:
