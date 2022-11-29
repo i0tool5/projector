@@ -1,3 +1,4 @@
+template_files_dirs: "template_go_files"
 
 directories:
   - directory:
@@ -6,8 +7,11 @@ directories:
       - directory:
         name: "go-template"
         files:
-          - main.go
-          - .gitignore
+        - file:
+          name: "main.go"
+          content_file: "main.template"
+        - file:
+          name: "gitignore"
   - directory:
     name: "configs"
     files:
