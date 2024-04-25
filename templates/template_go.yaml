@@ -1,5 +1,3 @@
-template_files_dirs: "template_go_files"
-
 directories:
   - directory:
     name: "cmd"
@@ -9,9 +7,8 @@ directories:
         files:
         - file:
           name: "main.go"
-          content_file: "main.template"
         - file:
-          name: "gitignore"
+          name: ".gitignore"
   - directory:
     name: "configs"
     files:
@@ -34,6 +31,12 @@ directories:
   - directory:
     name: "tools"
     files:
+
+files:
+  - file:
+    name: '.gitignore'
+  - file:
+    name: 'Makefile'
 
 # - directory:
 #   name: "docs"

@@ -10,7 +10,7 @@ type OptionVec<T> = Option<Vec<T>>;
 pub struct Template {
     pub template_files_dirs: Option<String>,
     pub directories: Vec<entities::Directory>,
-    pub files: OptionVec<String>,
+    pub files: OptionVec<entities::File>,
 }
 
 pub fn read_file(path: &str) -> Result<String, io::Error> {
@@ -25,8 +25,11 @@ impl Template {
     }
 
     pub fn parse_template(&self) {
-        let _dirs = self.directories.iter();
-        todo!();
+        let dirs = self.directories.iter();
+        for dir in dirs {
+            let d_ch = dir.walk();
+            println!("{:?}", d_ch);
+        }
     }
 
     pub fn generate(&self) {
@@ -36,7 +39,7 @@ impl Template {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Template};
+    use crate::Template;
     #[test]
     fn create_template() {
         let yaml = "
@@ -57,21 +60,18 @@ mod tests {
     #[test]
     fn parse_template() {
         let yaml = "
-            directories:
-                - directory:
-                  name: test0
-                - directory:
-                  name: test1
-                  directories:
-                    - directory:
-                      name: test1_test0
-                    - directory:
-                      name: test1_test1
-                    - directory:
-                      name: test1_test2
-                      directories:
-                        - directory:
-                          name: test1_test2_test0
+        directories:
+        - directory:
+          name: cmd
+          directories:
+            - directory:
+              name: go-template
+              files:
+              - file:
+                name: main.go
+                content_file: main.template
+              - file:
+                name: .gitignore
         ";
         let template = Template::new(yaml).unwrap();
         template.parse_template();

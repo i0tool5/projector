@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
-use std::{rc::Rc, fmt::Display};
+use std::{fmt::Display, rc::Rc};
 
 type OptionVec<T> = Option<Vec<T>>;
 
+/// Directory represents directory tree, that contains subdirectories and files.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Directory {
     pub name: String,
@@ -11,9 +12,17 @@ pub struct Directory {
 }
 
 impl Directory {
-    pub fn walk(&self) -> Vec<String> {
-        let mut tree = vec![];
+    /// Walk thru the children elements and collect them.
+    pub fn walk(&self) -> Vec<DirEntry> {
+        let mut tree: Vec<DirEntry> = vec![];
         let root_name = Rc::new(self.name.clone());
+
+        if self.files.is_none() && self.directories.is_none() {
+            tree.push(
+                DirEntry::new(EntryType::Directory, self.name.clone())
+            );
+            return tree;
+        }
 
         if self.directories.is_some() {
             for dir in self.directories.as_ref().unwrap() {
@@ -21,18 +30,23 @@ impl Directory {
                 tree.append(&mut ch);
             }
 
-        } else if self.files.is_some() {
-            for file in self.files.as_ref().unwrap() {
-                tree.push(file.name.clone());
-            }
-        } else {
-            tree.push(self.name.clone());
-            return tree;
         }
+
+        if self.files.is_some() {
+            for file in self.files.as_ref().unwrap() {
+                tree.push(
+                    DirEntry::new(EntryType::File, file.name.clone())
+                );
+            }
+        }
+
         tree = tree
                 .iter()
-                .map(|ch_name|{
-                    Rc::clone(&root_name).to_string() + "/" + ch_name.as_str()
+                .map(|entry|{
+                    DirEntry::new(
+                        entry.entry_type,
+                        Rc::clone(&root_name).to_string() + "/" + &entry.full_path
+                    )
                 })
                 .collect();
         tree
@@ -44,16 +58,8 @@ impl Directory {
 
         let mut dnames: Vec<String> = self
             .child_dirs_names();
-            // .clone()
-            // .iter()
-            // .map(|x| {
-            //     Rc::clone(&name_ref).to_string() + "/" + x.as_str()
-            // })
-            // .collect();
         
         let mut fnames = self.child_files_names();
-        
-        dbg!(fnames.clone());
         
         children.append(&mut dnames);
         children.append(&mut fnames);
@@ -95,9 +101,39 @@ impl Display for File {
     }
 }
 
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum EntryType {
+    Directory,
+    File,
+    Unknown,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct DirEntry {
+    pub entry_type: EntryType,
+    pub full_path: String
+}
+
+impl DirEntry {
+    pub fn new(entry_type: EntryType, full_path: String) -> Self {
+        DirEntry{
+            entry_type,
+            full_path,
+        }
+    }
+
+    pub fn is_file(&self) -> bool {
+        self.entry_type == EntryType::File
+    }
+
+    pub fn is_dir(&self) -> bool {
+        self.entry_type == EntryType::Directory
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::entities::{Directory, File};
+    use crate::entities::{Directory, File, DirEntry, EntryType};
     #[test]
     fn test_child_files() {
         let dir = Directory{
@@ -169,15 +205,22 @@ mod tests {
                     files: None,
                 },
             ]),
-            files: None,
+            files: Some(vec![
+                File {
+                    name: ".gitignore".to_string(),
+                    content_file: None
+                }
+            ]),
         };
-        let v = dir.walk();
+        let got = dir.walk();
+        let want = vec![
+            DirEntry::new(EntryType::File, String::from("td/td_td0/td0_1/test_file.rs")),
+            DirEntry::new(EntryType::Directory, String::from("td/td_td1/td1_1")),
+            DirEntry::new(EntryType::Directory, String::from("td/td_td2/td2_0")),
+            DirEntry::new(EntryType::Directory, String::from("td/td_td2/td2_1")),
+            DirEntry::new(EntryType::File, String::from("td/.gitignore")),
+        ];
 
-        assert_eq!(v, vec![
-            "td/td_td0/td0_1/test_file.rs",
-            "td/td_td1/td1_1",
-            "td/td_td2/td2_0",
-            "td/td_td2/td2_1"
-        ]);
+        assert_eq!(want, got);
     }
 }
