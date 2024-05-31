@@ -1,5 +1,17 @@
+[package]
+name = "projector-cli"
+version = "0.1.0"
+edition = "2021"
+resolver = "2"
+license = "MIT"
+
 [workspace]
 members = [
     "creator",
     "template_parser"
 ]
+
+[dependencies]
+clap = { version = "4.5.4", features = ["derive"] }
+template_parser = { path = "template_parser"}
+creator = { path = "creator" }

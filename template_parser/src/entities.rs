@@ -3,7 +3,7 @@ use std::{fmt::Display, rc::Rc};
 
 type OptionVec<T> = Option<Vec<T>>;
 
-/// Directory represents directory tree, that contains subdirectories and files.
+/// Directory represents directory tree, that may contain subdirectories and files.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Directory {
     pub name: String,
@@ -92,7 +92,8 @@ impl Directory {
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct File {
     pub name: String,
-    pub content_file: Option<String>
+    /// file with required content
+    pub content: Option<String>,
 }
 
 impl Display for File {
@@ -101,6 +102,7 @@ impl Display for File {
     }
 }
 
+/// EntryType is a type of entity contained in the directory.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum EntryType {
     Directory,
@@ -140,7 +142,7 @@ mod tests {
             name: "test_dir".to_string(),
             directories: None,
             files: Some(vec![
-                File{name: "file.rs".to_string(), content_file: None}
+                File{name: "file.rs".to_string(), content: None}
             ])
         };
         let fname = dir.child_files_names();
@@ -154,7 +156,7 @@ mod tests {
                 Directory{name: "test".to_string(), directories: None, files: None}
             ]),
             files: Some(vec![
-                File{name: "file.rs".to_string(), content_file: None}
+                File{name: "file.rs".to_string(), content: None}
             ])
         };
         let ch = dir.children_names();
@@ -173,7 +175,7 @@ mod tests {
                         files: Some(vec![
                             File {
                                 name: "test_file.rs".to_string(),
-                                content_file: None
+                                content: Some("main.tmpl".to_owned())
                             }
                         ]),
                     }]),
@@ -208,7 +210,7 @@ mod tests {
             files: Some(vec![
                 File {
                     name: ".gitignore".to_string(),
-                    content_file: None
+                    content: None
                 }
             ]),
         };
