@@ -3,14 +3,12 @@ use std::{fs, io};
 
 pub mod entities;
 
-type OptionVec<T> = Option<Vec<T>>;
-
 /// Template represents YAML template structure
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Template {
     pub template_files_dirs: Option<String>,
-    pub directories: Vec<entities::Directory>,
-    pub files: OptionVec<entities::File>,
+    pub directories: entities::Directories,
+    pub files: entities::OptionalFiles,
 }
 
 pub fn read_file(path: &str) -> Result<String, io::Error> {

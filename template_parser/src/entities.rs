@@ -3,6 +3,8 @@ use std::{fmt::Display, rc::Rc};
 
 type OptionVec<T> = Option<Vec<T>>;
 
+pub type Directories = Vec<Directory>;
+
 /// Directory represents directory tree, that may contain subdirectories and files.
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Directory {
@@ -88,6 +90,8 @@ impl Directory {
         children
     }
 }
+
+pub type OptionalFiles = OptionVec<File>;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct File {
