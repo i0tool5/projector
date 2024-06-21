@@ -6,11 +6,11 @@ use std::{
     path::Path,
 };
 
-use template_parser::entities::DirEntry;
+use template_parser::entities::Entry;
 
-pub fn create_path(
+pub fn create_path<T: Entry>(
     out_dir: &String,
-    entries: Vec<DirEntry>,
+    entries: Vec<T>,
 ) -> Result<(), std::io::Error> {
     let mut builder =  DirBuilder::new();
     builder.recursive(true);
@@ -18,7 +18,7 @@ pub fn create_path(
     let target = out_dir.to_owned();
     
     for entry in entries {
-        let target = target.clone() + &entry.full_path;
+        let target = target.clone() + &entry.get_full_path();
         let pth = Path::new(&target);
         if pth.exists() {
             continue;

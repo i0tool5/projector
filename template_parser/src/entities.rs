@@ -120,6 +120,12 @@ pub struct DirEntry {
     pub full_path: String
 }
 
+pub trait Entry {
+    fn is_file(&self) -> bool;
+    fn is_dir(&self) -> bool;
+    fn get_full_path(&self) -> String;
+}
+
 impl DirEntry {
     pub fn new(entry_type: EntryType, full_path: String) -> Self {
         DirEntry{
@@ -127,13 +133,19 @@ impl DirEntry {
             full_path,
         }
     }
+}
 
-    pub fn is_file(&self) -> bool {
+impl Entry for DirEntry {
+    fn is_file(&self) -> bool {
         self.entry_type == EntryType::File
     }
 
-    pub fn is_dir(&self) -> bool {
+    fn is_dir(&self) -> bool {
         self.entry_type == EntryType::Directory
+    }
+
+    fn get_full_path(&self) -> String {
+        String::clone(&self.full_path)
     }
 }
 
