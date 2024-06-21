@@ -1,29 +1,10 @@
-use clap::{Arg, Command};
-
 use template_parser;
 use creator;
 
-fn cli() -> Command {
-    Command::new("projector")
-        .about("A project generator utility")
-        .arg(
-            Arg::new("out_dir")
-            .long("out_dir")
-            .short('o')
-            .required(false)
-            .default_value("/tmp/project_template/")
-        )
-        .arg(
-            Arg::new("template_file")
-                .long("t_file")
-                .short('f')
-                .required(true)
-                .help("Provides a path to template file")
-        )
-}
+mod cli;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let matches = cli().get_matches();
+    let matches = cli::command().get_matches();
     let out_dir: &String = matches
         .get_one("out_dir")
         .unwrap();
